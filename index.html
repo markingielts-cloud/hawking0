@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lang Lang — Grammar Exercises</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #f5f4f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 780px; margin: 0 auto; }
+
+  header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 2px solid #1a1a1a;
+  }
+  header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+  header p { font-size: 0.9rem; color: #555; font-style: italic; }
+
+  .page-nav {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+  .page-tab {
+    flex: 1;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    background: #fff;
+    color: #888;
+    border: none;
+    border-right: 1px solid #ddd;
+    transition: background 0.15s, color 0.15s;
+  }
+  .page-tab:last-child { border-right: none; }
+  .page-tab.active { background: #185fa5; color: #fff; }
+  .page-tab:hover:not(.active) { background: #f0f0f0; color: #1a1a1a; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  .attempt-section { display: flex; flex-direction: column; gap: 4px; }
+  .attempt-label { font-size: 11px; font-family: Arial, sans-serif; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .attempt-dots { display: flex; gap: 6px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: #eee; border: 1.5px solid #bbb; transition: background 0.3s, border-color 0.3s; }
+  .dot.used { background: #e24b4a; border-color: #a32d2d; }
+  .score-display { font-family: Arial, sans-serif; font-size: 14px; color: #444; margin-left: auto; }
+
+  .btn {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: 1.5px solid #bbb;
+    background: #fff;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: #f0f0f0; }
+  .btn-primary { background: #185fa5; color: #fff; border-color: #185fa5; }
+  .btn-primary:hover { background: #0c447c; }
+  .btn-primary:disabled { background: #aaa; border-color: #aaa; cursor: not-allowed; }
+
+  .hint {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 1.25rem;
+    font-style: italic;
+  }
+
+  .feedback-panel {
+    display: none;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: #fff8ec;
+    border-left: 4px solid #ba7517;
+    border-radius: 0 8px 8px 0;
+    font-family: Arial, sans-serif;
+  }
+  .feedback-panel.visible { display: block; }
+  .fb-gap-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .fb-answer { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+  .fb-tense { font-size: 13px; font-weight: 600; color: #185fa5; margin-bottom: 6px; }
+  .fb-rule { font-size: 13px; color: #444; margin-bottom: 6px; line-height: 1.5; }
+  .fb-context { font-size: 13px; color: #1a1a1a; line-height: 1.6; font-style: italic; }
+
+  .story {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 1.75rem 2rem;
+    font-size: 16px;
+    line-height: 2.4;
+  }
+  .story p { margin-bottom: 1.5rem; }
+  .story p:last-child { margin-bottom: 0; }
+
+  .gap-input {
+    display: inline-block;
+    border: none;
+    border-bottom: 2.5px solid #999;
+    background: transparent;
+    color: #1a1a1a;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+    padding: 0 6px;
+    min-width: 80px;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+    vertical-align: baseline;
+  }
+  .gap-input:focus { border-bottom-color: #185fa5; }
+  .gap-input.correct { border-bottom-color: #3b6d11; color: #3b6d11; background: #eaf3de; border-radius: 4px 4px 0 0; font-weight: 600; }
+  .gap-input.wrong { border-bottom-color: #e24b4a; color: #a32d2d; background: #fcebeb; border-radius: 4px 4px 0 0; }
+  .gap-input.revealed { border-bottom-color: #ba7517; color: #633806; background: #faeeda; border-radius: 4px 4px 0 0; font-weight: 600; }
+  .gap-input.revealed:hover { background: #f5d9a0; }
+  .gap-input.correct-clickable { cursor: pointer; }
+  .gap-input.correct-clickable:hover { background: #d0e8b8; }
+  .gap-wrap { display: inline-block; position: relative; cursor: default; }
+  .gap-wrap.clickable { cursor: pointer; }
+  .gap-input:disabled { pointer-events: none; }
+
+  .quiz-card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1rem;
+    font-size: 15px;
+  }
+  .quiz-q { font-weight: 700; margin-bottom: 1rem; line-height: 1.5; }
+  .quiz-q .line-ref { font-size: 12px; font-family: Arial, sans-serif; font-weight: 400; color: #888; display: block; margin-bottom: 4px; font-style: italic; }
+  .quiz-q .excerpt { font-style: italic; color: #333; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1.5px solid #ddd;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    background: #fff;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: left;
+    width: 100%;
+  }
+  .quiz-option:hover:not(:disabled) { border-color: #185fa5; background: #eef5fc; }
+  .quiz-option .opt-label { font-weight: 700; min-width: 18px; color: #185fa5; }
+  .quiz-option.selected { border-color: #185fa5; background: #eef5fc; }
+  .quiz-option.correct-opt { border-color: #3b6d11; background: #eaf3de; color: #3b6d11; }
+  .quiz-option.correct-opt .opt-label { color: #3b6d11; }
+  .quiz-option.wrong-opt { border-color: #e24b4a; background: #fcebeb; color: #a32d2d; }
+  .quiz-option.wrong-opt .opt-label { color: #a32d2d; }
+  .quiz-option:disabled { cursor: not-allowed; opacity: 0.85; }
+  .quiz-feedback {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    display: none;
+  }
+  .quiz-feedback.visible { display: block; }
+  .quiz-feedback.correct-fb { background: #eaf3de; color: #27500a; border-left: 3px solid #3b6d11; }
+  .quiz-feedback.wrong-fb { background: #fff0f0; color: #791f1f; border-left: 3px solid #e24b4a; }
+
+  .footer { margin-top: 2rem; text-align: center; font-family: Arial, sans-serif; font-size: 12px; color: #aaa; }
+
+  /* ===== RATIONALE BOX ===== */
+  .rationale {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-left: 4px solid #185fa5;
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-family: Arial, sans-serif;
+  }
+  .rationale-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .rationale-body {}
+  .rationale-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #185fa5;
+    margin-bottom: 5px;
+  }
+  .rationale-text {
+    font-size: 13px;
+    color: #444;
+    line-height: 1.6;
+  }
+  .rationale-text strong { color: #1a1a1a; }
+
+  /* ===== DRAG & DROP (Part 3) ===== */
+  .dd-chip-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    min-height: 60px;
+  }
+  .dd-chip {
+    padding: 8px 14px;
+    background: #eef5fc;
+    border: 1.5px solid #185fa5;
+    border-radius: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-style: italic;
+    color: #185fa5;
+    cursor: grab;
+    user-select: none;
+    transition: background 0.15s, transform 0.1s, opacity 0.15s;
+  }
+  .dd-chip:active { cursor: grabbing; transform: scale(1.04); }
+  .dd-chip.dragging { opacity: 0.4; }
+  .dd-chip.correct-chip { background: #eaf3de; border-color: #3b6d11; color: #3b6d11; cursor: default; }
+  .dd-chip.wrong-chip  { background: #fcebeb; border-color: #e24b4a; color: #a32d2d; cursor: default; }
+  .dd-chip.revealed-chip { background: #faeeda; border-color: #ba7517; color: #633806; cursor: pointer; }
+  .dd-chip.clickable-chip { cursor: pointer; }
+
+  .dd-toolboxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .dd-box {
+    background: #fff;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    min-height: 120px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .dd-box.drag-over { border-color: #185fa5; background: #f0f7ff; }
+  .dd-box-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+  }
+  .dd-box-letter {
+    font-family: Georgia, serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #185fa5;
+    line-height: 1;
+    min-width: 20px;
+  }
+  .dd-box-title { font-family: Arial, sans-serif; font-size: 13px; font-weight: 700; color: #1a1a1a; }
+  .dd-box-sub  { font-family: Arial, sans-serif; font-size: 11px; color: #888; font-style: italic; }
+  .dd-drop-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 36px;
+  }
+
+  /* ===== LOGIC MATCH (Part 4) ===== */
+  .lm-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 15px;
+    line-height: 2;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+  .lm-sentence { display: inline; }
+  .lm-select {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1.5px solid #999;
+    background: #fff;
+    color: #1a1a1a;
+    cursor: pointer;
+    vertical-align: baseline;
+    margin: 0 4px;
+    transition: border-color 0.2s, background 0.2s;
+    max-width: 340px;
+  }
+  .lm-select:focus { outline: none; border-color: #185fa5; }
+  .lm-select.correct-sel { border-color: #3b6d11; background: #eaf3de; color: #3b6d11; font-weight: 600; }
+  .lm-select.wrong-sel   { border-color: #e24b4a; background: #fcebeb; color: #a32d2d; }
+  .lm-select.revealed-sel { border-color: #ba7517; background: #faeeda; color: #633806; font-weight: 600; }
+  .lm-feedback {
+    display: none;
+    margin-top: 8px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .lm-feedback.visible { display: block; }
+  .lm-feedback.correct-fb { background: #eaf3de; color: #27500a; border-left: 3px solid #3b6d11; }
+  .lm-feedback.wrong-fb   { background: #fff0f0; color: #791f1f; border-left: 3px solid #e24b4a; }
+
+  @media (max-width: 500px) {
+    .story { padding: 1.25rem 1rem; font-size: 15px; }
+    header h1 { font-size: 1.3rem; }
+    .quiz-card { padding: 1rem; }
+    .dd-toolboxes { grid-template-columns: 1fr; }
+    .lm-select { max-width: 100%; }
+  }
+
+  /* ===== LOCK SCREEN ===== */
+  #lock-screen {
+    position: fixed;
+    inset: 0;
+    background: #f5f4f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 2rem 1rem;
+  }
+  .lock-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  }
+  .lock-icon {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .lock-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+  }
+  .lock-subtitle {
+    font-size: 0.85rem;
+    color: #777;
+    font-style: italic;
+    margin-bottom: 1.75rem;
+  }
+  .lock-label {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #185fa5;
+    margin-bottom: 8px;
+    text-align: left;
+  }
+  .lock-input {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    outline: none;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+    background: #fff;
+    color: #1a1a1a;
+  }
+  .lock-input:focus { border-color: #185fa5; }
+  .lock-input.lock-wrong { border-color: #e24b4a; background: #fcebeb; }
+  .lock-input.lock-wrong::placeholder { color: #e24b4a; }
+  .lock-error {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #a32d2d;
+    margin-bottom: 0.75rem;
+    min-height: 18px;
+  }
+  .lock-btn {
+    width: 100%;
+    padding: 11px;
+    background: #185fa5;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .lock-btn:hover { background: #0c447c; }
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lock-screen">
+  <div class="lock-card">
+    <span class="lock-icon">🔐</span>
+    <div class="lock-title">Playing with Flying Keys</div>
+    <div class="lock-subtitle">Grammar exercises &nbsp;|&nbsp; Units 7–9 &nbsp;|&nbsp; B1–B2</div>
+    <label class="lock-label" for="lock-input">Enter your class keyword to begin</label>
+    <input class="lock-input" id="lock-input" type="password" placeholder="Keyword…" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkKey()"/>
+    <div class="lock-error" id="lock-error"></div>
+    <button class="lock-btn" onclick="checkKey()">Enter →</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <header>
+    <h1>Playing with Flying Keys — Lang Lang</h1>
+    <p>Grammar exercises &nbsp;|&nbsp; Units 7–9 &nbsp;|&nbsp; B1–B2</p>
+  </header>
+
+  <div class="page-nav">
+    <button class="page-tab active" onclick="switchPage(0)">Part 1 — Grammar probe</button>
+    <button class="page-tab" onclick="switchPage(1)">Part 2 — Gap fill</button>
+    <button class="page-tab" onclick="switchPage(2)">Part 3 — Narrative toolkit</button>
+    <button class="page-tab" onclick="switchPage(3)">Part 4 — Logic match</button>
+  </div>
+
+  <!-- PAGE 1: GRAMMAR PROBE -->
+  <div class="page active" id="page-0">
+
+    <div class="rationale">
+      <div class="rationale-icon">🔍</div>
+      <div class="rationale-body">
+        <div class="rationale-title">Why this helps you write better stories</div>
+        <div class="rationale-text">Great writers don't choose tenses randomly — every tense is a <strong>deliberate signal to the reader</strong> about when something happened and why it matters. This exercise trains you to read like a writer: to notice the choices an author makes and understand the logic behind them. When you can explain <em>why</em> a tense is used, you can start making those same choices intentionally in your own writing — giving your stories a clearer timeline and a stronger sense of control.</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="attempt-section">
+        <span class="attempt-label">Attempts remaining</span>
+        <div class="attempt-dots">
+          <div class="dot" id="q-dot0"></div>
+          <div class="dot" id="q-dot1"></div>
+          <div class="dot" id="q-dot2"></div>
+        </div>
+      </div>
+      <span class="score-display" id="q-score"></span>
+      <button class="btn btn-primary" id="q-submit-btn" onclick="submitQuiz()">Check answers</button>
+      <button class="btn" id="q-reset-btn" onclick="resetQuiz()" style="display:none;">Start again</button>
+    </div>
+
+    <div class="hint" id="q-hint">Read the extracts from the coursebook and choose the best explanation for each tense. Use your book to help you.</div>
+
+    <div id="quiz-container"></div>
+
+  </div>
+
+  <!-- PAGE 2: GAP FILL -->
+  <div class="page" id="page-1">
+
+    <div class="rationale">
+      <div class="rationale-icon">✍️</div>
+      <div class="rationale-body">
+        <div class="rationale-title">Why this helps you write better stories</div>
+        <div class="rationale-text">Reading a story is one thing — <strong>reconstructing it from the inside</strong> is another. By filling in every verb yourself, you are forced to think about the flow of time in the narrative: what happened first, what was already finished, what was still in progress, and what lay ahead. This is exactly the thinking a writer does before putting a sentence on the page. The more fluent this becomes, the more naturally your own writing will handle complex timelines without getting tangled.</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="attempt-section">
+        <span class="attempt-label">Attempts remaining</span>
+        <div class="attempt-dots">
+          <div class="dot" id="g-dot0"></div>
+          <div class="dot" id="g-dot1"></div>
+          <div class="dot" id="g-dot2"></div>
+        </div>
+      </div>
+      <span class="score-display" id="g-score"></span>
+      <button class="btn btn-primary" id="g-submit-btn" onclick="submitAnswers()">Check answers</button>
+      <button class="btn" id="g-reset-btn" onclick="resetExercise()" style="display:none;">Start again</button>
+    </div>
+
+    <div class="hint" id="g-hint">Type the correct verb form in each gap. Press Enter or click "Check answers" when ready.</div>
+
+    <div class="feedback-panel" id="g-feedback">
+      <div class="fb-gap-label" id="fb-label"></div>
+      <div class="fb-answer" id="fb-answer"></div>
+      <div class="fb-tense" id="fb-tense"></div>
+      <div class="fb-rule" id="fb-rule"></div>
+      <div class="fb-context" id="fb-context"></div>
+    </div>
+
+    <div class="story" id="story"></div>
+
+  </div>
+
+  <!-- PAGE 3: DRAG & DROP CATEGORISING -->
+  <div class="page" id="page-2">
+
+    <div class="rationale">
+      <div class="rationale-icon">🧰</div>
+      <div class="rationale-body">
+        <div class="rationale-title">Why this helps you write better stories</div>
+        <div class="rationale-text">Experienced writers think in <strong>tools, not just words</strong>. They ask: <em>do I need to move the timeline here, or surprise the reader, or go inside a character's head?</em> Before they can answer that question, they need a mental toolkit — a set of expressions organised by what job they do. This exercise builds that toolkit. Once you know which phrases control time, which create suspense, which report speech, and which reveal inner thoughts, you can reach for exactly the right one when you need it — rather than repeating the same phrases over and over.</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="attempt-section">
+        <span class="attempt-label">Attempts remaining</span>
+        <div class="attempt-dots">
+          <div class="dot" id="dd-dot0"></div>
+          <div class="dot" id="dd-dot1"></div>
+          <div class="dot" id="dd-dot2"></div>
+        </div>
+      </div>
+      <span class="score-display" id="dd-score"></span>
+      <button class="btn btn-primary" id="dd-submit-btn" onclick="submitDrag()">Check answers</button>
+      <button class="btn" id="dd-reset-btn" onclick="resetDrag()" style="display:none;">Start again</button>
+    </div>
+
+    <div class="hint" id="dd-hint">Drag each expression into the correct toolbox. Every expression belongs in exactly one category.</div>
+
+    <div class="dd-chip-bank" id="dd-bank"></div>
+
+    <div class="dd-toolboxes" id="dd-toolboxes">
+      <div class="dd-box" id="dd-box-A" ondragover="event.preventDefault()" ondrop="dropChip(event,'A')">
+        <div class="dd-box-header">
+          <span class="dd-box-letter">A</span>
+          <div>
+            <div class="dd-box-title">Time Travel</div>
+            <div class="dd-box-sub">Organising the timeline</div>
+          </div>
+        </div>
+        <div class="dd-drop-area" id="dd-area-A"></div>
+      </div>
+      <div class="dd-box" id="dd-box-B" ondragover="event.preventDefault()" ondrop="dropChip(event,'B')">
+        <div class="dd-box-header">
+          <span class="dd-box-letter">B</span>
+          <div>
+            <div class="dd-box-title">The Plot Twist</div>
+            <div class="dd-box-sub">Marking a sudden change</div>
+          </div>
+        </div>
+        <div class="dd-drop-area" id="dd-area-B"></div>
+      </div>
+      <div class="dd-box" id="dd-box-C" ondragover="event.preventDefault()" ondrop="dropChip(event,'C')">
+        <div class="dd-box-header">
+          <span class="dd-box-letter">C</span>
+          <div>
+            <div class="dd-box-title">Inside the Mind</div>
+            <div class="dd-box-sub">Describing thoughts &amp; feelings</div>
+          </div>
+        </div>
+        <div class="dd-drop-area" id="dd-area-C"></div>
+      </div>
+      <div class="dd-box" id="dd-box-D" ondragover="event.preventDefault()" ondrop="dropChip(event,'D')">
+        <div class="dd-box-header">
+          <span class="dd-box-letter">D</span>
+          <div>
+            <div class="dd-box-title">Who Said What?</div>
+            <div class="dd-box-sub">Reporting speech</div>
+          </div>
+        </div>
+        <div class="dd-drop-area" id="dd-area-D"></div>
+      </div>
+    </div>
+
+    <div class="feedback-panel" id="dd-feedback" style="display:none;">
+      <div class="fb-gap-label" id="dd-fb-label"></div>
+      <div class="fb-rule" id="dd-fb-rule"></div>
+    </div>
+
+  </div>
+
+  <!-- PAGE 4: LOGIC MATCH (inline dropdowns) -->
+  <div class="page" id="page-3">
+
+    <div class="rationale">
+      <div class="rationale-icon">🔗</div>
+      <div class="rationale-body">
+        <div class="rationale-title">Why this helps you write better stories</div>
+        <div class="rationale-text">Every sentence in a story creates an expectation in the reader's mind — a particular kind of continuation that <strong>feels logically right</strong>. This exercise trains your ear to hear that logic. Phrases like <em>"Up until that point"</em> or <em>"It dawned on me"</em> don't just add colour — they make a grammatical and narrative promise about what must come next. When you internalise these patterns, your sentences will flow more naturally and your reader will never feel lost or confused by a sudden shift in direction.</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="attempt-section">
+        <span class="attempt-label">Attempts remaining</span>
+        <div class="attempt-dots">
+          <div class="dot" id="lm-dot0"></div>
+          <div class="dot" id="lm-dot1"></div>
+          <div class="dot" id="lm-dot2"></div>
+        </div>
+      </div>
+      <span class="score-display" id="lm-score"></span>
+      <button class="btn btn-primary" id="lm-submit-btn" onclick="submitLogic()">Check answers</button>
+      <button class="btn" id="lm-reset-btn" onclick="resetLogic()" style="display:none;">Start again</button>
+    </div>
+
+    <div class="hint" id="lm-hint">Choose the correct ending for each sentence. Select from the dropdown to complete the thought.</div>
+
+    <div id="lm-container"></div>
+
+  </div>
+
+  <div class="footer">Interactive exercise — for classroom use</div>
+
+</div>
+<script>
+function switchPage(idx) {
+  document.querySelectorAll('.page').forEach((p,i) => p.classList.toggle('active', i===idx));
+  document.querySelectorAll('.page-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+}
+
+/* ===== LOCK SCREEN ===== */
+function checkKey() {
+  const input = document.getElementById('lock-input');
+  const error = document.getElementById('lock-error');
+  if (input.value === 'IamMrHawking') {
+    document.getElementById('lock-screen').style.display = 'none';
+  } else {
+    input.classList.add('lock-wrong');
+    error.textContent = 'Incorrect keyword — try again.';
+    input.value = '';
+    input.placeholder = 'Try again…';
+    setTimeout(() => {
+      input.classList.remove('lock-wrong');
+      input.placeholder = 'Keyword…';
+      error.textContent = '';
+    }, 2000);
+    input.focus();
+  }
+}
+
+/* ===== QUIZ DATA ===== */
+const questions = [
+  {
+    ref: "Page 205, line 8",
+    excerpt: "\u201c\u2026my body had been wracked by a high fever\u201d",
+    q: "Why does the author use this tense here?",
+    options: ["He still had the fever when he arrived at the station.", "The fever had already happened before the main story moment begins.", "He was predicting that he would get a fever in Beijing."],
+    correct: 1,
+    tense: "Past Perfect Passive",
+    explanation: "The fever occurred before the narrative present — before Lang Lang was at the station preparing to leave. The Past Perfect places it clearly in an earlier past, establishing the timeline of events."
+  },
+  {
+    ref: "Page 205, line 32",
+    excerpt: "\u201cI had been playing the piano since before I was two\u201d",
+    q: "What does this tense show about his relationship with the piano?",
+    options: ["He played the piano only once, when he was two years old.", "He had played the piano continuously for many years before this moment.", "He stopped playing the piano when he was nine years old."],
+    correct: 1,
+    tense: "Past Perfect Continuous",
+    explanation: "The Past Perfect Continuous emphasises duration — an activity that went on continuously over a long period before the narrative moment. The word 'since' is the key signal: it anchors the activity to a starting point and implies it never stopped."
+  },
+  {
+    ref: "Page 205, line 66",
+    excerpt: "\u201c\u2026my father\u2026 had anticipated all this\u201d",
+    q: "Why is the Past Perfect used for the father's planning?",
+    options: ["The father's plan was already in place before the events of the story.", "The father made his plan at the station on the morning of departure.", "The father had forgotten his plan by the time they reached Beijing."],
+    correct: 0,
+    tense: "Past Perfect Simple",
+    explanation: "The father's anticipation — his planning and preparation — happened before the main narrative events. The Past Perfect establishes this sequence clearly: first the father planned, then the story's events unfolded."
+  },
+  {
+    ref: "Page 205, line 16",
+    excerpt: "\u201c\u2026my life would soon be very different\u201d",
+    q: "Why does the author use 'would' instead of 'will' here?",
+    options: ["It describes a repeated habit from his childhood years.", "It expresses a future event as seen from a past point in time.", "It expresses a doubt or uncertainty in the narrator's mind."],
+    correct: 1,
+    tense: "Future in the Past",
+    explanation: "At the time of the story, Lang Lang was a child looking ahead. From his past perspective, the different life was still in the future. 'Would' is used to express future meaning from a past viewpoint — also called Future in the Past."
+  },
+  {
+    ref: "Page 205, line 53",
+    excerpt: "\u201c\u2026fifteen in my grade would be chosen\u201d",
+    q: "Why does the author use 'would be chosen' rather than 'will be chosen'?",
+    options: ["It describes an outcome that was still in the future from the narrator's past perspective.", "It is a polite request directed at the conservatory judges.", "It describes a selection process that happened in the distant past."],
+    correct: 0,
+    tense: "Future in the Past (Passive)",
+    explanation: "At the moment of the story, the selection had not happened yet — it was ahead of Lang Lang. 'Would be chosen' expresses this future outcome from his past viewpoint. The passive form also shifts the focus from who chooses to who is chosen."
+  },
+  {
+    ref: "Page 206, line 3",
+    excerpt: "\u201cI knew my father would not tolerate failure\u201d",
+    q: "What does 'would' indicate in this sentence?",
+    options: ["It describes something his father did repeatedly as a habit.", "It expresses what Lang Lang expected would happen, seen from a past moment.", "It records advice that Lang Lang gave to his father as a child."],
+    correct: 1,
+    tense: "Future in the Past",
+    explanation: "Lang Lang knew this about his father at the time of the story — it was his expectation about what lay ahead. 'Would not tolerate' expresses a future certainty from a past perspective, not a habit or advice."
+  },
+  {
+    ref: "Page 205, line 29 — direct speech",
+    excerpt: "\u201cYour music will always keep you company.\u201d",
+    q: "In a biography written in the past tense, why does 'will' become 'would' when this is reported?",
+    options: ["The music stopped keeping him company long before he wrote the book.", "Reported speech in a past narrative requires the tense to shift back one step.", "The word 'would' simply sounds more polite in written English."],
+    correct: 1,
+    tense: "Backshifting in reported speech",
+    explanation: "This is the rule of backshifting: when reporting speech in a past narrative, present tenses shift back one step into the past. 'Will' becomes 'would' because the reporting verb ('told him') is in the past tense."
+  },
+  {
+    ref: "Page 206, line 16 — direct speech",
+    excerpt: "\"I want you to live with us, Mother.\"",
+    q: "When reported as 'He told her he wanted her to live with them,' why does 'want' shift to 'wanted'?",
+    options: ["Reported speech in a past narrative shifts the present tense back to the past.", "Lang Lang changed his mind later and no longer wanted her to come.", "The verb 'want' is never used in the present tense in written English."],
+    correct: 0,
+    tense: "Backshifting: Present Simple → Past Simple",
+    explanation: "The reporting verb 'told' is in the past tense. This triggers backshifting: 'want' (Present Simple) shifts back to 'wanted' (Past Simple). The feeling was real and unchanged — only the tense form shifts to match the narrative voice."
+  },
+  {
+    ref: "Page 206, line 21 — direct speech",
+    excerpt: "\"I am our family\u2019s only breadwinner.\"",
+    q: "When reported, why does 'am' change to 'was'?",
+    options: ["The mother had already lost her job by the time she spoke these words.", "Reported speech in a past narrative shifts the present tense back to the past.", "The narrator is correcting a factual mistake the mother made."],
+    correct: 1,
+    tense: "Backshifting: Present Simple → Past Simple",
+    explanation: "Again, backshifting applies. The mother's statement is reported by a narrator writing in the past tense. 'Am' shifts to 'was' not because the fact changed, but because the grammar of reported speech requires it."
+  },
+  {
+    ref: "Page 206, line 42 — direct speech",
+    excerpt: "\"A great adventure awaits you.\"",
+    q: "When reported as 'She said a great adventure awaited him,' why does 'awaits' shift to 'awaited'?",
+    options: ["The adventure was already over by the time she said these words.", "Reported speech in a past narrative requires the tense to shift back one step.", "The word 'awaited' sounds more formal and suits the written biography."],
+    correct: 1,
+    tense: "Backshifting: Present Simple → Past Simple",
+    explanation: "The same backshifting rule applies here. 'Awaits' (Present Simple) shifts to 'awaited' (Past Simple) because the reporting verb is in the past. The adventure had not happened yet — the shift is grammatical, not factual."
+  },
+  {
+    ref: "Page 206, line 42 — original quote",
+    excerpt: "\"A great adventure awaits you.\"",
+    q: "Why did the mother use 'awaits' (Present Simple) rather than 'is awaiting' (Present Continuous)?",
+    options: ["'Awaits' describes a fixed, destined truth — something certain and permanent, not a temporary situation.", "'Awaiting' describes a physical movement toward a place.", "'Awaiting' describes a habit that happens every day."],
+    correct: 0,
+    tense: "Present Simple for stative / timeless meaning",
+    explanation: "The Present Simple is used here for a timeless or destined truth — the kind of statement that feels certain and permanent rather than temporary. 'Is awaiting' would suggest a temporary, ongoing action, which weakens the sense of destiny the mother intends to convey."
+  }
+];
+
+let qAttempts = 0;
+const qMax = 3;
+let qFeedbackMode = false;
+let qSelected = new Array(questions.length).fill(null);
+let qCorrect = new Array(questions.length).fill(false);
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  let html = '';
+  questions.forEach((q, qi) => {
+    html += `<div class="quiz-card" id="qcard-${qi}">`;
+    html += `<div class="quiz-q"><span class="line-ref">${q.ref} &mdash; <em>${q.excerpt}</em></span>${qi+1}. ${q.q}</div>`;
+    html += `<div class="quiz-options">`;
+    const labels = ['A','B','C'];
+    q.options.forEach((opt, oi) => {
+      html += `<button class="quiz-option" id="qopt-${qi}-${oi}" onclick="selectOption(${qi},${oi})"><span class="opt-label">${labels[oi]}</span><span>${opt}</span></button>`;
+    });
+    html += `</div>`;
+    html += `<div class="quiz-feedback" id="qfb-${qi}"></div>`;
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+function selectOption(qi, oi) {
+  if (qFeedbackMode || qCorrect[qi]) return;
+  qSelected[qi] = oi;
+  const labels = ['A','B','C'];
+  labels.forEach((_,i) => {
+    const btn = document.getElementById('qopt-'+qi+'-'+i);
+    btn.classList.toggle('selected', i===oi);
+  });
+}
+
+function submitQuiz() {
+  if (qFeedbackMode || qAttempts >= qMax) return;
+  const unanswered = questions.filter((_,i) => qSelected[i]===null && !qCorrect[i]);
+  if (unanswered.length > 0) {
+    document.getElementById('q-hint').textContent = 'Please answer all questions before checking.';
+    return;
+  }
+  qAttempts++;
+  document.getElementById('q-dot'+(qAttempts-1)).classList.add('used');
+
+  questions.forEach((q, qi) => {
+    if (qCorrect[qi]) return;
+    const sel = qSelected[qi];
+    const labels = ['A','B','C'];
+    if (sel === q.correct) {
+      qCorrect[qi] = true;
+      labels.forEach((_,i) => {
+        const btn = document.getElementById('qopt-'+qi+'-'+i);
+        btn.disabled = true;
+        btn.classList.remove('selected','wrong-opt');
+        if (i===sel) btn.classList.add('correct-opt');
+      });
+      const fb = document.getElementById('qfb-'+qi);
+      fb.textContent = q.tense + ' — ' + q.explanation;
+      fb.className = 'quiz-feedback visible correct-fb';
+    } else {
+      labels.forEach((_,i) => {
+        const btn = document.getElementById('qopt-'+qi+'-'+i);
+        if (i===sel) btn.classList.add('wrong-opt');
+        btn.classList.remove('selected');
+      });
+    }
+  });
+
+  const total = qCorrect.filter(Boolean).length;
+  document.getElementById('q-score').textContent = total + ' / ' + questions.length + ' correct';
+
+  if (total === questions.length) {
+    document.getElementById('q-hint').textContent = 'Excellent — all answers correct! Move to Part 2 when you are ready.';
+    document.getElementById('q-submit-btn').disabled = true;
+    document.getElementById('q-reset-btn').style.display = 'inline-block';
+    return;
+  }
+  if (qAttempts >= qMax) {
+    enterQuizFeedbackMode();
+  } else {
+    const rem = qMax - qAttempts;
+    document.getElementById('q-hint').textContent = rem + ' attempt' + (rem>1?'s':'') + ' remaining. Review your wrong answers and try again.';
+    qSelected = qSelected.map((s,i) => qCorrect[i] ? s : null);
+  }
+}
+
+function enterQuizFeedbackMode() {
+  qFeedbackMode = true;
+  document.getElementById('q-submit-btn').disabled = true;
+  document.getElementById('q-reset-btn').style.display = 'inline-block';
+  document.getElementById('q-hint').textContent = 'Feedback mode — correct answers and explanations are shown below.';
+  const labels = ['A','B','C'];
+  questions.forEach((q, qi) => {
+    if (qCorrect[qi]) return;
+    labels.forEach((_,i) => {
+      const btn = document.getElementById('qopt-'+qi+'-'+i);
+      btn.disabled = true;
+      btn.classList.remove('selected','wrong-opt');
+      if (i===q.correct) btn.classList.add('correct-opt');
+      else if (i===qSelected[qi]) btn.classList.add('wrong-opt');
+    });
+    const fb = document.getElementById('qfb-'+qi);
+    fb.textContent = q.tense + ' — ' + q.explanation;
+    fb.className = 'quiz-feedback visible wrong-fb';
+  });
+}
+
+function resetQuiz() {
+  qAttempts = 0; qFeedbackMode = false;
+  qSelected = new Array(questions.length).fill(null);
+  qCorrect = new Array(questions.length).fill(false);
+  for(let i=0;i<3;i++) document.getElementById('q-dot'+i).classList.remove('used');
+  document.getElementById('q-score').textContent = '';
+  document.getElementById('q-hint').textContent = 'Read the extracts from the coursebook and choose the best explanation for each tense. Use your book to help you.';
+  document.getElementById('q-submit-btn').disabled = false;
+  document.getElementById('q-reset-btn').style.display = 'none';
+  buildQuiz();
+}
+
+/* ===== GAP FILL DATA ===== */
+const gaps = [
+  { id:0, answer:"prepared", verb:"prepare", tense:"Past Simple", rule:"Past Simple is used to state the main events that move the narrative forward.", context:"This is the opening action of the story. Lang Lang's preparation to move is a completed event that starts the narrative chain." },
+  { id:1, answer:"had been suffering", verb:"suffer", tense:"Past Perfect Continuous", rule:"Past Perfect Continuous is used for an ongoing situation that was already happening before the main narrative moment.", context:"The fever had already been going on for forty-eight hours before Lang Lang was ready to travel. The continuous form emphasises its duration." },
+  { id:2, answer:"were chasing", verb:"chase", tense:"Past Continuous", rule:"Past Continuous is used for an ongoing background action happening simultaneously with another past action.", context:"The monsters were not a single event — they were a repeated, ongoing experience inside his fever dreams, happening at the same time as his illness." },
+  { id:3, answer:"had improved", verb:"improve", tense:"Past Perfect Simple", rule:"Past Perfect Simple is used for a completed action that happened before another past moment.", context:"His health improved before the departure — it was already done by the time the story begins. 'Just in time' confirms this sequence." },
+  { id:4, answer:"had been playing", verb:"play", tense:"Past Perfect Continuous", rule:"Past Perfect Continuous is used for an ongoing activity that started before the main narrative and continued up to it.", context:"Lang Lang did not simply play piano once — he had been doing it continuously since before he was two. The word 'since' is the key signal for this tense." },
+  { id:5, answer:"had already sacrificed", verb:"sacrifice", tense:"Past Perfect Simple", rule:"Past Perfect Simple marks a completed action that occurred before the main narrative moment.", context:"The father's career sacrifice happened before the story begins. 'Already' reinforces that this was done and completed before Lang Lang's departure." },
+  { id:6, answer:"would be competing", verb:"compete", tense:"Future in the Past Continuous", rule:"Future in the Past is used for events that were still in the future at the time of the narrative, seen from a past perspective.", context:"From Lang Lang's point of view on the platform, the competition had not happened yet. The continuous form emphasises the ongoing, gruelling nature of competing." },
+  { id:7, answer:"would have", verb:"have", tense:"Future in the Past", rule:"Future in the Past expresses a condition or requirement that existed in the future from the narrative's past perspective.", context:"Finishing in the top eight was not yet achieved — it was a future requirement Lang Lang was aware of as he stood at the station." },
+  { id:8, answer:"felt", verb:"feel", tense:"Past Simple", rule:"Past Simple advances the narrative by stating a completed emotional state.", context:"'Felt' is a single, completed moment of emotion that concludes the opening paragraph and moves the story forward to the station scene." },
+  { id:9, answer:"were waiting", verb:"wait", tense:"Past Continuous", rule:"Past Continuous describes an ongoing background action that sets the scene for main narrative events.", context:"The waiting is the backdrop against which the conversation between Lang Lang and his mother takes place. It was in progress when other things happened." },
+  { id:10, answer:"informed", verb:"inform", tense:"Past Simple", rule:"Past Simple is used for completed reporting actions that advance the narrative.", context:"The mother's act of informing is a single completed action in the sequence of events at the station." },
+  { id:11, answer:"would be waiting", verb:"wait", tense:"Future in the Past Continuous", rule:"Future in the Past Continuous is used in reported speech when the original statement used Future Continuous.", context:"The mother originally said 'Your father will be waiting for us.' In reported speech, will becomes would — the continuous form captures the father's ongoing presence at the station." },
+  { id:12, answer:"cried", verb:"cry", tense:"Past Simple", rule:"Past Simple advances the narrative with a completed action.", context:"Lang Lang's crying is a single, completed emotional response in the sequence of events. It moves the conversation forward." },
+  { id:13, answer:"wanted", verb:"want", tense:"Past Simple — reported speech", rule:"Past Simple is used in reported speech when the original verb is in the Present Simple.", context:"Lang Lang originally felt 'I want her to come along.' In reported speech, want shifts back to wanted." },
+  { id:14, answer:"explained", verb:"explain", tense:"Past Simple", rule:"Past Simple is used for completed reporting verbs that advance the narrative.", context:"The mother's explanation is a single completed action in the conversation sequence at the station." },
+  { id:15, answer:"had to", verb:"have to", tense:"Past Simple — modal", rule:"Had to is used in reported speech and narrative to express obligation in the past.", context:"The mother's obligation to stay in Shenyang was real and fixed at that moment. 'Need to' in direct speech becomes 'had to' in reported speech." },
+  { id:16, answer:"was", verb:"be", tense:"Past Simple — reported speech", rule:"Past Simple is used in reported speech when the original verb is Present Simple.", context:"The mother originally said 'I am the only one earning money.' In reported speech, am shifts back to was." },
+  { id:17, answer:"reminded", verb:"remind", tense:"Past Simple", rule:"Past Simple is used for completed reporting verbs that advance the narrative.", context:"The act of reminding is a single completed action — the last thing the mother does conversationally before they board the train." },
+  { id:18, answer:"awaited", verb:"await", tense:"Past Simple — reported speech", rule:"Past Simple is used in reported speech when the original verb is Present Simple.", context:"The mother originally said 'A great adventure awaits you.' In reported speech, awaits shifts back to awaited." },
+  { id:19, answer:"was", verb:"be", tense:"Past Simple", rule:"Past Simple is used to state facts and relationships that were true at the time of the narrative.", context:"The father's role as motivator is presented as a fixed, established fact at the time of the story." },
+  { id:20, answer:"was", verb:"be", tense:"Past Simple", rule:"Past Simple is used to state facts and relationships that were true at the time of the narrative.", context:"The mother's role as emotional anchor is equally a fixed, established fact — the parallel structure of the two sentences reinforces both roles simultaneously." },
+  { id:21, answer:"reflected", verb:"reflect", tense:"Past Simple", rule:"Past Simple advances the narrative with a completed action.", context:"Lang Lang's reflection on his name is a single completed moment of thought that opens the final paragraph and drives toward the story's conclusion." },
+  { id:22, answer:"recognized", verb:"recognize", tense:"Past Simple", rule:"Past Simple advances the narrative with a completed mental action.", context:"The moment of recognition — understanding his duty — is the emotional and narrative climax of the story. It is completed and final." },
+  { id:23, answer:"had to", verb:"have to", tense:"Past Simple — modal", rule:"Had to expresses obligation in the past narrative.", context:"Living up to expectations was not a choice — it was a fixed obligation Lang Lang accepted at this moment." },
+  { id:24, answer:"knew", verb:"know", tense:"Past Simple", rule:"Past Simple advances the narrative with a completed mental state.", context:"Lang Lang's knowledge of the challenge ahead is presented as a completed, certain awareness — not a doubt or a question." },
+  { id:25, answer:"would be", verb:"be", tense:"Future in the Past", rule:"Future in the Past is used for situations that were still ahead from the narrative's past perspective.", context:"The challenging road was not yet being experienced — it lay ahead of Lang Lang as he stood at the station. From his past perspective, it was still a future reality." },
+  { id:26, answer:"had", verb:"have", tense:"Past Simple", rule:"Past Simple states a fixed condition that was true at the time of the narrative.", context:"Having only his talent was Lang Lang's reality at that moment — a completed, established fact that closes the story on a note of both vulnerability and determination." }
+];
+
+const segments = [
+  {t:"text",text:"When he was nine, Lang Lang "},{t:"gap",id:0},
+  {t:"text",text:" to move to Beijing to follow his dreams. Before this journey, he "},{t:"gap",id:1},
+  {t:"text",text:" from a severe fever while monsters "},{t:"gap",id:2},
+  {t:"text",text:" him in his nightmares, but his health "},{t:"gap",id:3},
+  {t:"text",text:" just in time. He "},{t:"gap",id:4},
+  {t:"text",text:" piano since he was a toddler, and his father "},{t:"gap",id:5},
+  {t:"text",text:" his own career to ensure his son\u2019s success. He "},{t:"gap",id:6},
+  {t:"text",text:" against three thousand other children for only fifteen spots at the conservatory, and to win a financial scholarship his family desperately needed, he "},{t:"gap",id:7},
+  {t:"text",text:" to finish in the top eight. Consequently, the young boy "},{t:"gap",id:8},
+  {t:"text",text:" a great weight of responsibility."},{t:"para"},
+  {t:"text",text:"As they "},{t:"gap",id:9},
+  {t:"text",text:" for the train, his mother tried to calm his fears. She "},{t:"gap",id:10},
+  {t:"text",text:" him that his father "},{t:"gap",id:11},
+  {t:"text",text:" for them with a new apartment. When Lang Lang "},{t:"gap",id:12},
+  {t:"text",text:" because he "},{t:"gap",id:13},
+  {t:"text",text:" her to come along, she "},{t:"gap",id:14},
+  {t:"text",text:" that she "},{t:"gap",id:15},
+  {t:"text",text:" to stay in Shenyang because she "},{t:"gap",id:16},
+  {t:"text",text:" the only one earning money for the family. She "},{t:"gap",id:17},
+  {t:"text",text:" him that a great adventure "},{t:"gap",id:18},
+  {t:"text",text:" him. His father "},{t:"gap",id:19},
+  {t:"text",text:" his motivator, but his mother "},{t:"gap",id:20},
+  {t:"text",text:" his emotional anchor."},{t:"para"},
+  {t:"text",text:"At that moment, Lang Lang "},{t:"gap",id:21},
+  {t:"text",text:" on his name, which means \u201cbrightness and sunshine\u201d and \u201ceducated gentleman.\u201d He "},{t:"gap",id:22},
+  {t:"text",text:" that he "},{t:"gap",id:23},
+  {t:"text",text:" to live up to these high expectations. Looking ahead, he "},{t:"gap",id:24},
+  {t:"text",text:" the road "},{t:"gap",id:25},
+  {t:"text",text:" challenging, but he also knew that he "},{t:"gap",id:26},
+  {t:"text",text:" only his immense talent to rely on in such a competitive environment."}
+];
+
+let gAttempts=0, gFeedbackMode=false;
+let gCorrect=new Array(gaps.length).fill(false);
+
+function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
+function inputWidth(a){ return Math.max(90,a.length*10)+'px'; }
+
+function buildStory(){
+  const story=document.getElementById('story');
+  let html='<p>';
+  segments.forEach(seg=>{
+    if(seg.t==='text') html+=seg.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    else if(seg.t==='para') html+='</p><p>';
+    else if(seg.t==='gap'){
+      const g=gaps[seg.id];
+      html+=`<span class="gap-wrap" id="wrap-${g.id}" data-id="${g.id}"><input class="gap-input" id="gap-${g.id}" data-id="${g.id}" style="width:${inputWidth(g.answer)};" placeholder="(${g.verb})" autocomplete="off" spellcheck="false"/></span>`;
+    }
+  });
+  html+='</p>';
+  story.innerHTML=html;
+  gaps.forEach(g=>{
+    const inp=document.getElementById('gap-'+g.id);
+    if(inp) inp.addEventListener('keydown',e=>{ if(e.key==='Enter') submitAnswers(); });
+  });
+}
+
+function submitAnswers(){
+  if(gFeedbackMode||gAttempts>=3) return;
+  gAttempts++;
+  document.getElementById('g-dot'+(gAttempts-1)).classList.add('used');
+  gaps.forEach(g=>{
+    if(gCorrect[g.id]) return;
+    const inp=document.getElementById('gap-'+g.id);
+    if(!inp) return;
+    if(normalize(inp.value)===normalize(g.answer)){
+      inp.classList.remove('wrong'); inp.classList.add('correct');
+      inp.disabled=true; gCorrect[g.id]=true;
+    } else { inp.classList.remove('correct'); inp.classList.add('wrong'); }
+  });
+  const total=gCorrect.filter(Boolean).length;
+  document.getElementById('g-score').textContent=total+' / '+gaps.length+' correct';
+  if(total===gaps.length){
+    document.getElementById('g-hint').textContent='Excellent work — all gaps correct!';
+    document.getElementById('g-submit-btn').disabled=true;
+    document.getElementById('g-reset-btn').style.display='inline-block';
+    enterGapFeedback(); return;
+  }
+  if(gAttempts>=3) enterGapFeedback();
+  else {
+    const rem=3-gAttempts;
+    document.getElementById('g-hint').textContent=rem+' attempt'+(rem>1?'s':'')+' remaining. Review the red gaps and try again.';
+  }
+}
+
+function enterGapFeedback(){
+  gFeedbackMode=true;
+  document.getElementById('g-submit-btn').disabled=true;
+  document.getElementById('g-reset-btn').style.display='inline-block';
+  document.getElementById('g-hint').textContent='Feedback mode: click any gap to see the correct answer and a grammar explanation.';
+  gaps.forEach(g=>{
+    const inp=document.getElementById('gap-'+g.id);
+    const wrap=document.getElementById('wrap-'+g.id);
+    if(!inp||!wrap) return;
+    if(!gCorrect[g.id]){ inp.value=g.answer; inp.classList.remove('wrong','correct'); inp.classList.add('revealed'); inp.disabled=true; }
+    else { inp.classList.add('correct-clickable'); inp.disabled=true; }
+    wrap.classList.add('clickable');
+    wrap.style.cursor='pointer';
+    wrap.addEventListener('click',()=>showGapFeedback(g.id));
+  });
+}
+
+function showGapFeedback(id){
+  const g=gaps[id];
+  document.getElementById('fb-label').textContent='Gap '+(id+1)+' — correct answer';
+  document.getElementById('fb-answer').textContent=g.answer;
+  document.getElementById('fb-tense').textContent=g.tense;
+  document.getElementById('fb-rule').textContent=g.rule;
+  document.getElementById('fb-context').textContent=g.context;
+  const panel=document.getElementById('g-feedback');
+  panel.classList.add('visible');
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function resetExercise(){
+  gAttempts=0; gFeedbackMode=false;
+  gCorrect=new Array(gaps.length).fill(false);
+  for(let i=0;i<3;i++) document.getElementById('g-dot'+i).classList.remove('used');
+  document.getElementById('g-score').textContent='';
+  document.getElementById('g-hint').textContent='Type the correct verb form in each gap. Press Enter or click "Check answers" when ready.';
+  document.getElementById('g-submit-btn').disabled=false;
+  document.getElementById('g-reset-btn').style.display='none';
+  document.getElementById('g-feedback').classList.remove('visible');
+  buildStory();
+}
+
+buildQuiz();
+buildStory();
+
+/* ===== PART 3: DRAG & DROP ===== */
+const ddChips = [
+  { id:'chip-A1', text:'Up until that point…',        correct:'A', note:'"Up until that point" draws a boundary in the timeline — it sets everything before this moment apart from what follows.' },
+  { id:'chip-A2', text:'From that day on…',            correct:'A', note:'"From that day on" marks a turning point in the timeline — it separates the past from a new era that follows.' },
+  { id:'chip-B1', text:'Out of the blue…',             correct:'B', note:'"Out of the blue" signals something completely unexpected — the classic marker of a sudden narrative surprise.' },
+  { id:'chip-B2', text:'Little did I know…',           correct:'B', note:'"Little did I know" creates dramatic irony — the narrator hints that something surprising is about to be revealed. Note: it also has a timeline flavour, so this one is worth discussing!' },
+  { id:'chip-C1', text:'It dawned on me that…',        correct:'C', note:'"It dawned on me" describes the internal moment of realisation — a thought breaking through to consciousness.' },
+  { id:'chip-C2', text:'I found myself staring…',      correct:'C', note:'"I found myself" describes an involuntary inner state — the narrator is caught in a feeling or action, not choosing it.' },
+  { id:'chip-D1', text:'She went on to explain that…', correct:'D', note:'"Went on to explain" is a reporting verb — it introduces and frames what another person said.' },
+  { id:'chip-D2', text:'He was quick to point out that…', correct:'D', note:'"Was quick to point out" is also a reporting verb — and it characterises the speaker\'s manner as well as reporting their words.' },
+];
+
+let ddAttempts = 0, ddFeedbackMode = false;
+const ddPlaced = {}; // chipId → boxId
+const ddCorrect = {}; // chipId → bool
+
+function buildDrag() {
+  const bank = document.getElementById('dd-bank');
+  bank.innerHTML = '';
+  // shuffle chips
+  const shuffled = [...ddChips].sort(() => Math.random() - 0.5);
+  shuffled.forEach(chip => {
+    const el = document.createElement('div');
+    el.className = 'dd-chip';
+    el.id = chip.id;
+    el.textContent = chip.text;
+    el.draggable = true;
+    el.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('chipId', chip.id);
+      el.classList.add('dragging');
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    // touch support
+    el.addEventListener('touchstart', touchStart, {passive:true});
+    el.addEventListener('touchmove',  touchMove,  {passive:false});
+    el.addEventListener('touchend',   touchEnd);
+    bank.appendChild(el);
+  });
+  // clear drop areas
+  ['A','B','C','D'].forEach(b => {
+    document.getElementById('dd-area-'+b).innerHTML = '';
+    const box = document.getElementById('dd-box-'+b);
+    box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
+    box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
+    box.addEventListener('drop', e => { e.preventDefault(); box.classList.remove('drag-over'); dropChip(e, b); });
+  });
+}
+
+function dropChip(e, boxId) {
+  if (ddFeedbackMode) return;
+  const chipId = e.dataTransfer ? e.dataTransfer.getData('chipId') : e;
+  if (!chipId) return;
+  const chipEl = document.getElementById(chipId);
+  if (!chipEl) return;
+  // remove from wherever it was
+  chipEl.remove();
+  ddPlaced[chipId] = boxId;
+  const area = document.getElementById('dd-area-'+boxId);
+  // make it removable (click to return to bank)
+  chipEl.onclick = () => {
+    if (ddFeedbackMode) return;
+    chipEl.onclick = null;
+    chipEl.remove();
+    delete ddPlaced[chipId];
+    document.getElementById('dd-bank').appendChild(chipEl);
+  };
+  area.appendChild(chipEl);
+}
+
+// ---- touch drag ----
+let _touchChip = null, _touchClone = null;
+function touchStart(e) {
+  if (ddFeedbackMode) return;
+  _touchChip = e.currentTarget;
+}
+function touchMove(e) {
+  if (!_touchChip) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  if (!_touchClone) {
+    _touchClone = _touchChip.cloneNode(true);
+    _touchClone.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;opacity:0.85;';
+    document.body.appendChild(_touchClone);
+  }
+  _touchClone.style.left = (t.clientX - 40) + 'px';
+  _touchClone.style.top  = (t.clientY - 20) + 'px';
+  // highlight box under finger
+  ['A','B','C','D'].forEach(b => document.getElementById('dd-box-'+b).classList.remove('drag-over'));
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  const box = el && el.closest('.dd-box');
+  if (box) box.classList.add('drag-over');
+}
+function touchEnd(e) {
+  if (!_touchChip) return;
+  if (_touchClone) { _touchClone.remove(); _touchClone = null; }
+  const t = e.changedTouches[0];
+  ['A','B','C','D'].forEach(b => document.getElementById('dd-box-'+b).classList.remove('drag-over'));
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  const box = el && el.closest('.dd-box');
+  if (box) {
+    const boxId = box.id.replace('dd-box-','');
+    const fakeEvt = { dataTransfer: null };
+    dropChipById(_touchChip.id, boxId);
+  } else {
+    // return to bank
+    _touchChip.remove();
+    delete ddPlaced[_touchChip.id];
+    document.getElementById('dd-bank').appendChild(document.getElementById(_touchChip.id) || _touchChip);
+  }
+  _touchChip = null;
+}
+function dropChipById(chipId, boxId) {
+  if (ddFeedbackMode) return;
+  const chipEl = document.getElementById(chipId);
+  if (!chipEl) return;
+  chipEl.remove();
+  ddPlaced[chipId] = boxId;
+  const area = document.getElementById('dd-area-'+boxId);
+  chipEl.onclick = () => {
+    if (ddFeedbackMode) return;
+    chipEl.onclick = null;
+    chipEl.remove();
+    delete ddPlaced[chipId];
+    document.getElementById('dd-bank').appendChild(chipEl);
+  };
+  area.appendChild(chipEl);
+}
+
+function submitDrag() {
+  if (ddFeedbackMode || ddAttempts >= 3) return;
+  // check all placed
+  const unplaced = ddChips.filter(c => !ddPlaced[c.id]);
+  if (unplaced.length > 0) {
+    document.getElementById('dd-hint').textContent = 'Place all expressions into a toolbox before checking.';
+    return;
+  }
+  ddAttempts++;
+  document.getElementById('dd-dot'+(ddAttempts-1)).classList.add('used');
+
+  ddChips.forEach(chip => {
+    if (ddCorrect[chip.id]) return;
+    const chipEl = document.getElementById(chip.id);
+    if (!chipEl) return;
+    if (ddPlaced[chip.id] === chip.correct) {
+      ddCorrect[chip.id] = true;
+      chipEl.classList.add('correct-chip');
+    } else {
+      chipEl.classList.add('wrong-chip');
+    }
+  });
+
+  const total = Object.values(ddCorrect).filter(Boolean).length;
+  document.getElementById('dd-score').textContent = total + ' / ' + ddChips.length + ' correct';
+
+  if (total === ddChips.length) {
+    document.getElementById('dd-hint').textContent = 'Excellent — all expressions correctly categorised! Click any chip to read why.';
+    document.getElementById('dd-submit-btn').disabled = true;
+    document.getElementById('dd-reset-btn').style.display = 'inline-block';
+    enterDragFeedback(); return;
+  }
+  if (ddAttempts >= 3) { enterDragFeedback(); return; }
+  const rem = 3 - ddAttempts;
+  document.getElementById('dd-hint').textContent = rem + ' attempt' + (rem>1?'s':'') + ' remaining. Move the red chips and try again.';
+  // clear wrong state so student can re-drag
+  ddChips.forEach(chip => {
+    if (ddCorrect[chip.id]) return;
+    const chipEl = document.getElementById(chip.id);
+    if (chipEl) chipEl.classList.remove('wrong-chip');
+  });
+}
+
+function enterDragFeedback() {
+  ddFeedbackMode = true;
+  document.getElementById('dd-submit-btn').disabled = true;
+  document.getElementById('dd-reset-btn').style.display = 'inline-block';
+  document.getElementById('dd-hint').textContent = 'Feedback mode — click any chip to read why it belongs there.';
+  // move wrong chips to correct box
+  ddChips.forEach(chip => {
+    const chipEl = document.getElementById(chip.id);
+    if (!chipEl) return;
+    if (!ddCorrect[chip.id]) {
+      chipEl.remove();
+      chipEl.classList.remove('wrong-chip');
+      chipEl.classList.add('revealed-chip');
+      document.getElementById('dd-area-'+chip.correct).appendChild(chipEl);
+      ddPlaced[chip.id] = chip.correct;
+    }
+    chipEl.onclick = () => showDragFeedback(chip.id);
+    chipEl.classList.add('clickable-chip');
+  });
+}
+
+function showDragFeedback(chipId) {
+  const chip = ddChips.find(c => c.id === chipId);
+  if (!chip) return;
+  const panel = document.getElementById('dd-feedback');
+  document.getElementById('dd-fb-label').textContent = '"' + chip.text + '"';
+  document.getElementById('dd-fb-rule').textContent = chip.note;
+  panel.style.display = 'block';
+  panel.classList.add('visible');
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function resetDrag() {
+  ddAttempts = 0; ddFeedbackMode = false;
+  Object.keys(ddPlaced).forEach(k => delete ddPlaced[k]);
+  Object.keys(ddCorrect).forEach(k => delete ddCorrect[k]);
+  for (let i=0;i<3;i++) document.getElementById('dd-dot'+i).classList.remove('used');
+  document.getElementById('dd-score').textContent = '';
+  document.getElementById('dd-hint').textContent = 'Drag each expression into the correct toolbox. Every expression belongs in exactly one category.';
+  document.getElementById('dd-submit-btn').disabled = false;
+  document.getElementById('dd-reset-btn').style.display = 'none';
+  document.getElementById('dd-feedback').style.display = 'none';
+  document.getElementById('dd-feedback').classList.remove('visible');
+  buildDrag();
+}
+
+buildDrag();
+
+/* ===== PART 4: LOGIC MATCH ===== */
+const lmItems = [
+  {
+    id: 0,
+    starter: 'Up until that point, I had never',
+    correct: '…left the small village where I was born.',
+    options: [
+      '…left the small village where I was born.',
+      '…how nervous I felt about the new city.',
+      '…realised the journey would take so long.',
+    ],
+    explanation: '"Up until that point" sets a past boundary and pairs naturally with Past Perfect ("had never"). The ending must describe something that had not happened up to that moment — leaving home fits perfectly.'
+  },
+  {
+    id: 1,
+    starter: 'Little did I know that morning',
+    correct: '…how much I would eventually love the piano.',
+    options: [
+      '…I had already packed my bags.',
+      '…how much I would eventually love the piano.',
+      '…the platform was crowded with families.',
+    ],
+    explanation: '"Little did I know" creates dramatic irony — it hints at a future surprise the narrator didn\'t see coming. Only the piano ending describes something that turned out to be unexpectedly true.'
+  },
+  {
+    id: 2,
+    starter: 'It suddenly dawned on me that',
+    correct: '…I was actually the youngest person in the room.',
+    options: [
+      '…I was actually the youngest person in the room.',
+      '…the room fell completely silent.',
+      '…everyone stood up and clapped.',
+    ],
+    explanation: '"It dawned on me" introduces an internal realisation — a thought becoming clear. The ending must be a fact the narrator suddenly understood, not an external event.'
+  },
+  {
+    id: 3,
+    starter: 'I found myself staring',
+    correct: '…at the empty stage, unable to move a muscle.',
+    options: [
+      '…I had forgotten my music folder.',
+      '…at the empty stage, unable to move a muscle.',
+      '…the competition began without warning.',
+    ],
+    explanation: '"I found myself" describes an involuntary state — the narrator is caught in an action they didn\'t choose. "Staring at" something completes this grammatically and emotionally.'
+  },
+  {
+    id: 4,
+    starter: 'He was quick to point out that',
+    correct: '…the exam would be much harder than I expected.',
+    options: [
+      '…everyone had already heard the news.',
+      '…he had been practising for weeks.',
+      '…the exam would be much harder than I expected.',
+    ],
+    explanation: '"Was quick to point out" is a reporting verb that also characterises the speaker\'s manner. The ending must be a piece of information that someone else stated — a fact being reported.'
+  },
+];
+
+let lmAttempts = 0, lmFeedbackMode = false;
+const lmCorrect = new Array(lmItems.length).fill(false);
+
+function buildLogic() {
+  const container = document.getElementById('lm-container');
+  let html = '';
+  lmItems.forEach(item => {
+    // shuffle options
+    const opts = [...item.options].sort(() => Math.random() - 0.5);
+    html += `<div class="lm-card" id="lm-card-${item.id}">`;
+    html += `<span class="lm-sentence">${item.starter}</span>`;
+    html += `<select class="lm-select" id="lm-sel-${item.id}">`;
+    html += `<option value="">— choose an ending —</option>`;
+    opts.forEach(opt => {
+      html += `<option value="${opt}">${opt}</option>`;
+    });
+    html += `</select>`;
+    html += `<div class="lm-feedback" id="lm-fb-${item.id}"></div>`;
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+function submitLogic() {
+  if (lmFeedbackMode || lmAttempts >= 3) return;
+  const unanswered = lmItems.filter(item => !lmCorrect[item.id] && !document.getElementById('lm-sel-'+item.id).value);
+  if (unanswered.length > 0) {
+    document.getElementById('lm-hint').textContent = 'Please complete all sentences before checking.';
+    return;
+  }
+  lmAttempts++;
+  document.getElementById('lm-dot'+(lmAttempts-1)).classList.add('used');
+
+  lmItems.forEach(item => {
+    if (lmCorrect[item.id]) return;
+    const sel = document.getElementById('lm-sel-'+item.id);
+    const fb  = document.getElementById('lm-fb-'+item.id);
+    if (sel.value === item.correct) {
+      lmCorrect[item.id] = true;
+      sel.classList.add('correct-sel');
+      sel.disabled = true;
+      fb.textContent = '✓ ' + item.explanation;
+      fb.className = 'lm-feedback visible correct-fb';
+    } else {
+      sel.classList.add('wrong-sel');
+      sel.classList.remove('correct-sel');
+    }
+  });
+
+  const total = lmCorrect.filter(Boolean).length;
+  document.getElementById('lm-score').textContent = total + ' / ' + lmItems.length + ' correct';
+
+  if (total === lmItems.length) {
+    document.getElementById('lm-hint').textContent = 'Excellent — all sentences correctly completed!';
+    document.getElementById('lm-submit-btn').disabled = true;
+    document.getElementById('lm-reset-btn').style.display = 'inline-block';
+    return;
+  }
+  if (lmAttempts >= 3) {
+    enterLogicFeedback(); return;
+  }
+  const rem = 3 - lmAttempts;
+  document.getElementById('lm-hint').textContent = rem + ' attempt' + (rem>1?'s':'') + ' remaining. Review the highlighted sentences and try again.';
+  lmItems.forEach(item => {
+    if (lmCorrect[item.id]) return;
+    const sel = document.getElementById('lm-sel-'+item.id);
+    sel.classList.remove('wrong-sel');
+  });
+}
+
+function enterLogicFeedback() {
+  lmFeedbackMode = true;
+  document.getElementById('lm-submit-btn').disabled = true;
+  document.getElementById('lm-reset-btn').style.display = 'inline-block';
+  document.getElementById('lm-hint').textContent = 'Feedback mode — correct answers and explanations are shown below.';
+  lmItems.forEach(item => {
+    if (lmCorrect[item.id]) return;
+    const sel = document.getElementById('lm-sel-'+item.id);
+    const fb  = document.getElementById('lm-fb-'+item.id);
+    sel.value = item.correct;
+    sel.classList.remove('wrong-sel');
+    sel.classList.add('revealed-sel');
+    sel.disabled = true;
+    fb.textContent = item.explanation;
+    fb.className = 'lm-feedback visible wrong-fb';
+  });
+}
+
+function resetLogic() {
+  lmAttempts = 0; lmFeedbackMode = false;
+  lmCorrect.fill(false);
+  for (let i=0;i<3;i++) document.getElementById('lm-dot'+i).classList.remove('used');
+  document.getElementById('lm-score').textContent = '';
+  document.getElementById('lm-hint').textContent = 'Choose the correct ending for each sentence. Select from the dropdown to complete the thought.';
+  document.getElementById('lm-submit-btn').disabled = false;
+  document.getElementById('lm-reset-btn').style.display = 'none';
+  buildLogic();
+}
+
+buildLogic();
+</script>
+</body>
+</html>
