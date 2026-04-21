@@ -452,8 +452,8 @@
 <div id="lock-screen">
   <div class="lock-card">
     <span class="lock-icon">🔐</span>
-    <div class="lock-title">Narrative Writing Practice</div>
-    <div class="lock-subtitle">Story language exercises &nbsp;|&nbsp; B1–B2</div>
+    <div class="lock-title">Playing with Flying Keys</div>
+    <div class="lock-subtitle">Grammar exercises &nbsp;|&nbsp; Units 7–9 &nbsp;|&nbsp; B1–B2</div>
     <label class="lock-label" for="lock-input">Enter your class keyword to begin</label>
     <input class="lock-input" id="lock-input" type="password" placeholder="Keyword…" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkKey()"/>
     <div class="lock-error" id="lock-error"></div>
@@ -464,18 +464,50 @@
 <div class="container">
 
   <header>
-    <h1>Narrative Writing — Lang Lang</h1>
-    <p>Story language exercises &nbsp;|&nbsp; B1–B2</p>
+    <h1>Playing with Flying Keys — Lang Lang</h1>
+    <p>Grammar exercises &nbsp;|&nbsp; Units 7–9 &nbsp;|&nbsp; B1–B2</p>
   </header>
 
   <div class="page-nav">
-    <button class="page-tab active" onclick="switchPage(0)">Part 1 — Gap fill</button>
-    <button class="page-tab" onclick="switchPage(1)">Part 2 — Narrative toolkit</button>
-    <button class="page-tab" onclick="switchPage(2)">Part 3 — Logic match</button>
+    <button class="page-tab active" onclick="switchPage(0)">Part 1 — Grammar probe</button>
+    <button class="page-tab" onclick="switchPage(1)">Part 2 — Gap fill</button>
+    <button class="page-tab" onclick="switchPage(2)">Part 3 — Narrative toolkit</button>
+    <button class="page-tab" onclick="switchPage(3)">Part 4 — Logic match</button>
   </div>
 
-  <!-- PAGE 1: GAP FILL -->
+  <!-- PAGE 1: GRAMMAR PROBE -->
   <div class="page active" id="page-0">
+
+    <div class="rationale">
+      <div class="rationale-icon">🔍</div>
+      <div class="rationale-body">
+        <div class="rationale-title">Why this helps you write better stories</div>
+        <div class="rationale-text">Great writers don't choose tenses randomly — every tense is a <strong>deliberate signal to the reader</strong> about when something happened and why it matters. This exercise trains you to read like a writer: to notice the choices an author makes and understand the logic behind them. When you can explain <em>why</em> a tense is used, you can start making those same choices intentionally in your own writing — giving your stories a clearer timeline and a stronger sense of control.</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="attempt-section">
+        <span class="attempt-label">Attempts remaining</span>
+        <div class="attempt-dots">
+          <div class="dot" id="q-dot0"></div>
+          <div class="dot" id="q-dot1"></div>
+          <div class="dot" id="q-dot2"></div>
+        </div>
+      </div>
+      <span class="score-display" id="q-score"></span>
+      <button class="btn btn-primary" id="q-submit-btn" onclick="submitQuiz()">Check answers</button>
+      <button class="btn" id="q-reset-btn" onclick="resetQuiz()" style="display:none;">Start again</button>
+    </div>
+
+    <div class="hint" id="q-hint">Read the extracts from the coursebook and choose the best explanation for each tense. Use your book to help you.</div>
+
+    <div id="quiz-container"></div>
+
+  </div>
+
+  <!-- PAGE 2: GAP FILL -->
+  <div class="page" id="page-1">
 
     <div class="rationale">
       <div class="rationale-icon">✍️</div>
@@ -513,8 +545,8 @@
 
   </div>
 
-  <!-- PAGE 2: DRAG & DROP CATEGORISING -->
-  <div class="page" id="page-1">
+  <!-- PAGE 3: DRAG & DROP CATEGORISING -->
+  <div class="page" id="page-2">
 
     <div class="rationale">
       <div class="rationale-icon">🧰</div>
@@ -592,8 +624,8 @@
 
   </div>
 
-  <!-- PAGE 3: LOGIC MATCH (inline dropdowns) -->
-  <div class="page" id="page-2">
+  <!-- PAGE 4: LOGIC MATCH (inline dropdowns) -->
+  <div class="page" id="page-3">
 
     <div class="rationale">
       <div class="rationale-icon">🔗</div>
@@ -650,6 +682,228 @@ function checkKey() {
     }, 2000);
     input.focus();
   }
+}
+
+/* ===== QUIZ DATA ===== */
+const questions = [
+  {
+    ref: "Page 205, line 8",
+    excerpt: "\u201c\u2026my body had been wracked by a high fever\u201d",
+    q: "Why does the author use this tense here?",
+    options: ["He still had the fever when he arrived at the station.", "The fever had already happened before the main story moment begins.", "He was predicting that he would get a fever in Beijing."],
+    correct: 1,
+    tense: "Past Perfect Passive",
+    explanation: "The fever occurred before the narrative present — before Lang Lang was at the station preparing to leave. The Past Perfect places it clearly in an earlier past, establishing the timeline of events."
+  },
+  {
+    ref: "Page 205, line 32",
+    excerpt: "\u201cI had been playing the piano since before I was two\u201d",
+    q: "What does this tense show about his relationship with the piano?",
+    options: ["He played the piano only once, when he was two years old.", "He had played the piano continuously for many years before this moment.", "He stopped playing the piano when he was nine years old."],
+    correct: 1,
+    tense: "Past Perfect Continuous",
+    explanation: "The Past Perfect Continuous emphasises duration — an activity that went on continuously over a long period before the narrative moment. The word 'since' is the key signal: it anchors the activity to a starting point and implies it never stopped."
+  },
+  {
+    ref: "Page 205, line 66",
+    excerpt: "\u201c\u2026my father\u2026 had anticipated all this\u201d",
+    q: "Why is the Past Perfect used for the father's planning?",
+    options: ["The father's plan was already in place before the events of the story.", "The father made his plan at the station on the morning of departure.", "The father had forgotten his plan by the time they reached Beijing."],
+    correct: 0,
+    tense: "Past Perfect Simple",
+    explanation: "The father's anticipation — his planning and preparation — happened before the main narrative events. The Past Perfect establishes this sequence clearly: first the father planned, then the story's events unfolded."
+  },
+  {
+    ref: "Page 205, line 16",
+    excerpt: "\u201c\u2026my life would soon be very different\u201d",
+    q: "Why does the author use 'would' instead of 'will' here?",
+    options: ["It describes a repeated habit from his childhood years.", "It expresses a future event as seen from a past point in time.", "It expresses a doubt or uncertainty in the narrator's mind."],
+    correct: 1,
+    tense: "Future in the Past",
+    explanation: "At the time of the story, Lang Lang was a child looking ahead. From his past perspective, the different life was still in the future. 'Would' is used to express future meaning from a past viewpoint — also called Future in the Past."
+  },
+  {
+    ref: "Page 205, line 53",
+    excerpt: "\u201c\u2026fifteen in my grade would be chosen\u201d",
+    q: "Why does the author use 'would be chosen' rather than 'will be chosen'?",
+    options: ["It describes an outcome that was still in the future from the narrator's past perspective.", "It is a polite request directed at the conservatory judges.", "It describes a selection process that happened in the distant past."],
+    correct: 0,
+    tense: "Future in the Past (Passive)",
+    explanation: "At the moment of the story, the selection had not happened yet — it was ahead of Lang Lang. 'Would be chosen' expresses this future outcome from his past viewpoint. The passive form also shifts the focus from who chooses to who is chosen."
+  },
+  {
+    ref: "Page 206, line 3",
+    excerpt: "\u201cI knew my father would not tolerate failure\u201d",
+    q: "What does 'would' indicate in this sentence?",
+    options: ["It describes something his father did repeatedly as a habit.", "It expresses what Lang Lang expected would happen, seen from a past moment.", "It records advice that Lang Lang gave to his father as a child."],
+    correct: 1,
+    tense: "Future in the Past",
+    explanation: "Lang Lang knew this about his father at the time of the story — it was his expectation about what lay ahead. 'Would not tolerate' expresses a future certainty from a past perspective, not a habit or advice."
+  },
+  {
+    ref: "Page 205, line 29 — direct speech",
+    excerpt: "\u201cYour music will always keep you company.\u201d",
+    q: "In a biography written in the past tense, why does 'will' become 'would' when this is reported?",
+    options: ["The music stopped keeping him company long before he wrote the book.", "Reported speech in a past narrative requires the tense to shift back one step.", "The word 'would' simply sounds more polite in written English."],
+    correct: 1,
+    tense: "Backshifting in reported speech",
+    explanation: "This is the rule of backshifting: when reporting speech in a past narrative, present tenses shift back one step into the past. 'Will' becomes 'would' because the reporting verb ('told him') is in the past tense."
+  },
+  {
+    ref: "Page 206, line 16 — direct speech",
+    excerpt: "\"I want you to live with us, Mother.\"",
+    q: "When reported as 'He told her he wanted her to live with them,' why does 'want' shift to 'wanted'?",
+    options: ["Reported speech in a past narrative shifts the present tense back to the past.", "Lang Lang changed his mind later and no longer wanted her to come.", "The verb 'want' is never used in the present tense in written English."],
+    correct: 0,
+    tense: "Backshifting: Present Simple → Past Simple",
+    explanation: "The reporting verb 'told' is in the past tense. This triggers backshifting: 'want' (Present Simple) shifts back to 'wanted' (Past Simple). The feeling was real and unchanged — only the tense form shifts to match the narrative voice."
+  },
+  {
+    ref: "Page 206, line 21 — direct speech",
+    excerpt: "\"I am our family\u2019s only breadwinner.\"",
+    q: "When reported, why does 'am' change to 'was'?",
+    options: ["The mother had already lost her job by the time she spoke these words.", "Reported speech in a past narrative shifts the present tense back to the past.", "The narrator is correcting a factual mistake the mother made."],
+    correct: 1,
+    tense: "Backshifting: Present Simple → Past Simple",
+    explanation: "Again, backshifting applies. The mother's statement is reported by a narrator writing in the past tense. 'Am' shifts to 'was' not because the fact changed, but because the grammar of reported speech requires it."
+  },
+  {
+    ref: "Page 206, line 42 — direct speech",
+    excerpt: "\"A great adventure awaits you.\"",
+    q: "When reported as 'She said a great adventure awaited him,' why does 'awaits' shift to 'awaited'?",
+    options: ["The adventure was already over by the time she said these words.", "Reported speech in a past narrative requires the tense to shift back one step.", "The word 'awaited' sounds more formal and suits the written biography."],
+    correct: 1,
+    tense: "Backshifting: Present Simple → Past Simple",
+    explanation: "The same backshifting rule applies here. 'Awaits' (Present Simple) shifts to 'awaited' (Past Simple) because the reporting verb is in the past. The adventure had not happened yet — the shift is grammatical, not factual."
+  },
+  {
+    ref: "Page 206, line 42 — original quote",
+    excerpt: "\"A great adventure awaits you.\"",
+    q: "Why did the mother use 'awaits' (Present Simple) rather than 'is awaiting' (Present Continuous)?",
+    options: ["'Awaits' describes a fixed, destined truth — something certain and permanent, not a temporary situation.", "'Awaiting' describes a physical movement toward a place.", "'Awaiting' describes a habit that happens every day."],
+    correct: 0,
+    tense: "Present Simple for stative / timeless meaning",
+    explanation: "The Present Simple is used here for a timeless or destined truth — the kind of statement that feels certain and permanent rather than temporary. 'Is awaiting' would suggest a temporary, ongoing action, which weakens the sense of destiny the mother intends to convey."
+  }
+];
+
+let qAttempts = 0;
+const qMax = 3;
+let qFeedbackMode = false;
+let qSelected = new Array(questions.length).fill(null);
+let qCorrect = new Array(questions.length).fill(false);
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  let html = '';
+  questions.forEach((q, qi) => {
+    html += `<div class="quiz-card" id="qcard-${qi}">`;
+    html += `<div class="quiz-q"><span class="line-ref">${q.ref} &mdash; <em>${q.excerpt}</em></span>${qi+1}. ${q.q}</div>`;
+    html += `<div class="quiz-options">`;
+    const labels = ['A','B','C'];
+    q.options.forEach((opt, oi) => {
+      html += `<button class="quiz-option" id="qopt-${qi}-${oi}" onclick="selectOption(${qi},${oi})"><span class="opt-label">${labels[oi]}</span><span>${opt}</span></button>`;
+    });
+    html += `</div>`;
+    html += `<div class="quiz-feedback" id="qfb-${qi}"></div>`;
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+function selectOption(qi, oi) {
+  if (qFeedbackMode || qCorrect[qi]) return;
+  qSelected[qi] = oi;
+  const labels = ['A','B','C'];
+  labels.forEach((_,i) => {
+    const btn = document.getElementById('qopt-'+qi+'-'+i);
+    btn.classList.toggle('selected', i===oi);
+  });
+}
+
+function submitQuiz() {
+  if (qFeedbackMode || qAttempts >= qMax) return;
+  const unanswered = questions.filter((_,i) => qSelected[i]===null && !qCorrect[i]);
+  if (unanswered.length > 0) {
+    document.getElementById('q-hint').textContent = 'Please answer all questions before checking.';
+    return;
+  }
+  qAttempts++;
+  document.getElementById('q-dot'+(qAttempts-1)).classList.add('used');
+
+  questions.forEach((q, qi) => {
+    if (qCorrect[qi]) return;
+    const sel = qSelected[qi];
+    const labels = ['A','B','C'];
+    if (sel === q.correct) {
+      qCorrect[qi] = true;
+      labels.forEach((_,i) => {
+        const btn = document.getElementById('qopt-'+qi+'-'+i);
+        btn.disabled = true;
+        btn.classList.remove('selected','wrong-opt');
+        if (i===sel) btn.classList.add('correct-opt');
+      });
+      const fb = document.getElementById('qfb-'+qi);
+      fb.textContent = q.tense + ' — ' + q.explanation;
+      fb.className = 'quiz-feedback visible correct-fb';
+    } else {
+      labels.forEach((_,i) => {
+        const btn = document.getElementById('qopt-'+qi+'-'+i);
+        if (i===sel) btn.classList.add('wrong-opt');
+        btn.classList.remove('selected');
+      });
+    }
+  });
+
+  const total = qCorrect.filter(Boolean).length;
+  document.getElementById('q-score').textContent = total + ' / ' + questions.length + ' correct';
+
+  if (total === questions.length) {
+    document.getElementById('q-hint').textContent = 'Excellent — all answers correct! Move to Part 2 when you are ready.';
+    document.getElementById('q-submit-btn').disabled = true;
+    document.getElementById('q-reset-btn').style.display = 'inline-block';
+    return;
+  }
+  if (qAttempts >= qMax) {
+    enterQuizFeedbackMode();
+  } else {
+    const rem = qMax - qAttempts;
+    document.getElementById('q-hint').textContent = rem + ' attempt' + (rem>1?'s':'') + ' remaining. Review your wrong answers and try again.';
+    qSelected = qSelected.map((s,i) => qCorrect[i] ? s : null);
+  }
+}
+
+function enterQuizFeedbackMode() {
+  qFeedbackMode = true;
+  document.getElementById('q-submit-btn').disabled = true;
+  document.getElementById('q-reset-btn').style.display = 'inline-block';
+  document.getElementById('q-hint').textContent = 'Feedback mode — correct answers and explanations are shown below.';
+  const labels = ['A','B','C'];
+  questions.forEach((q, qi) => {
+    if (qCorrect[qi]) return;
+    labels.forEach((_,i) => {
+      const btn = document.getElementById('qopt-'+qi+'-'+i);
+      btn.disabled = true;
+      btn.classList.remove('selected','wrong-opt');
+      if (i===q.correct) btn.classList.add('correct-opt');
+      else if (i===qSelected[qi]) btn.classList.add('wrong-opt');
+    });
+    const fb = document.getElementById('qfb-'+qi);
+    fb.textContent = q.tense + ' — ' + q.explanation;
+    fb.className = 'quiz-feedback visible wrong-fb';
+  });
+}
+
+function resetQuiz() {
+  qAttempts = 0; qFeedbackMode = false;
+  qSelected = new Array(questions.length).fill(null);
+  qCorrect = new Array(questions.length).fill(false);
+  for(let i=0;i<3;i++) document.getElementById('q-dot'+i).classList.remove('used');
+  document.getElementById('q-score').textContent = '';
+  document.getElementById('q-hint').textContent = 'Read the extracts from the coursebook and choose the best explanation for each tense. Use your book to help you.';
+  document.getElementById('q-submit-btn').disabled = false;
+  document.getElementById('q-reset-btn').style.display = 'none';
+  buildQuiz();
 }
 
 /* ===== GAP FILL DATA ===== */
@@ -810,6 +1064,7 @@ function resetExercise(){
   buildStory();
 }
 
+buildQuiz();
 buildStory();
 
 /* ===== PART 3: DRAG & DROP ===== */
